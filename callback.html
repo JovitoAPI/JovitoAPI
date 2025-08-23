@@ -1,24 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Paytm Money Callback</title>
-  <meta charset="UTF-8">
+  <title>Authorization Successful</title>
 </head>
 <body>
-  <h2>✅ Authentication Successful</h2>
-  <p>Your authorization code is:</p>
-  <pre id="authCode">Waiting...</pre>
-
-  <script>
-    // Extract query string parameters from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-
-    if (code) {
-      document.getElementById('authCode').textContent = code;
-    } else {
-      document.getElementById('authCode').textContent = "⚠️ No code found in URL";
-    }
-  </script>
+  <h2>Authorization Successful ✅</h2>
+  <p>You can now close this window and return to your app.</p>
 </body>
 </html>
+
