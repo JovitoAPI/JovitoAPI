@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: pyPMClient
+Version: 0.1.0
+License-File: LICENSE.txt
+Requires-Dist: requests
+Requires-Dist: websocket-client
+Requires-Dist: six
+Dynamic: license-file
+Dynamic: requires-dist
