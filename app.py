@@ -1,32 +1,21 @@
-from flask import Flask, redirect, request
-import os
+from flask import Flask, request
 
 app = Flask(__name__)
-
-# Load environment variables
-CLIENT_ID = os.getenv("PAYTM_CLIENT_ID")
-REDIRECT_URI = os.getenv("PAYTM_REDIRECT_URI")
 
 @app.route("/")
 def home():
     return """
     <h1>🚀 Welcome to Your Trading Bot Site</h1>
     <p>Click below to log in with Paytm Money:</p>
-    <a href="/login"><button>Login with Paytm Money</button></a>
+    <a href="https://developer.paytmmoney.com/oauth2/authorize?client_id=YOUR_CLIENT_ID&response_type=code&scope=read&redirect_uri=https://paytm-auth-site.vercel.app/callback">
+        <button>Authorize with Paytm Money</button>
+    </a>
     """
-
-@app.route("/login")
-def login():
-    auth_url = (
-        "https://developer.paytmmoney.com/oauth2/authorize"
-        f"?client_id={CLIENT_ID}"
-        "&response_type=code"
-        "&scope=read"
-        f"&redirect_uri={REDIRECT_URI}"
-    )
-    return redirect(auth_url)
 
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
-    return f"<h2>Authorization Code: {code}</h2>"
+    if code:
+        return f"<h2>✅ Authorization Code:</h2><p>{code}</p>"
+    else:
+        return "<h2>⚠️ No code found in URL</h2>"
