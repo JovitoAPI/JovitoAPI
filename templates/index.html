@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Trading Bot Auth</title>
-  <meta charset="UTF-8">
+    <meta charset="UTF-8">
+    <title>🚀 Paytm Money Authentication</title>
 </head>
-<body>
-  <h1>🚀 Welcome to Your Trading Bot Site</h1>
-  <p>Click below to log in with Paytm Money:</p>
-
-  <a href="https://developer.paytmmoney.com/oauth2/authorize?response_type=code&client_id=b1928e80f02b43eea5551c257d238674&redirect_uri=https://jovitoapi.github.io/JovitoAPI/callback.html&scope=openid">
-    🔑 Authorize with Paytm Money
-  </a>
+<body style="font-family: Arial, sans-serif; text-align: center; margin-top: 100px;">
+    <h1>🚀 Paytm Money Authentication</h1>
+    <p>Click below to authorize with Paytm Money:</p>
+    <!-- Pressing this goes to /login where Flask builds the auth URL using env vars -->
+    <a href="/login">
+        <button style="padding: 12px 24px; font-size: 16px; cursor: pointer;">
+            Authorize with Paytm Money
+        </button>
+    </a>
 </body>
 </html>
