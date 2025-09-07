@@ -1,7 +1,6 @@
 import os
 import requests
 from flask import Flask, request, render_template, jsonify
-# trigger redeploy for /test-env
 app = Flask(__name__)
 
 # Pull credentials from Vercel environment variables (global scope)
