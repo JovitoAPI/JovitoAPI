@@ -1,17 +1,14 @@
+import os
 import requests
 from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
-CLIENT_ID = "b1928e80f02b43eea5551c257d238674"
-CLIENT_SECRET = "911f98860ffe4404a37816e897187cb2"
+# Pull credentials from Vercel environment variables
+CLIENT_ID = os.getenv("PAYTM_CLIENT_ID")
+CLIENT_SECRET = os.getenv("PAYTM_CLIENT_SECRET")
 REDIRECT_URI = "https://paytm-auth-site.vercel.app/callback"
-
 TOKEN_URL = "https://developer.paytmmoney.com/accounts/oauth/token"
-
-@app.route("/")
-def index():
-    return render_template("index.html")
 
 @app.route("/callback")
 def callback():
