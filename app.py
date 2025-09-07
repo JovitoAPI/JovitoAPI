@@ -4,12 +4,21 @@ from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
-# Pull credentials from Vercel environment variables
+# Pull credentials from Vercel environment variables (global scope)
 CLIENT_ID = os.getenv("PAYTM_CLIENT_ID")
 CLIENT_SECRET = os.getenv("PAYTM_CLIENT_SECRET")
 REDIRECT_URI = "https://paytm-auth-site.vercel.app/callback"
 TOKEN_URL = "https://developer.paytmmoney.com/accounts/oauth/token"
 
+# Temporary route to check environment variables
+@app.route("/test-env")
+def test_env():
+    if CLIENT_ID and CLIENT_SECRET:
+        return "✅ Environment variables are working!"
+    else:
+        return "❌ Environment variables NOT found!"
+
+# Your normal callback route
 @app.route("/callback")
 def callback():
     code = request.args.get("code")
