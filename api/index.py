@@ -1,66 +1,55 @@
-# trigger redeploy for /test-env
 import os
 import requests
-from urllib.parse import quote_plus
 from flask import Flask, redirect, request, render_template, jsonify
+from urllib.parse import quote_plus
 
 app = Flask(__name__, template_folder="templates")
 
-# 🔑 Read secrets from environment (Vercel env vars or local .env for testing)
+# Env vars from Vercel / local .env
 CLIENT_ID = os.getenv("PAYTM_CLIENT_ID", "")
 CLIENT_SECRET = os.getenv("PAYTM_CLIENT_SECRET", "")
-# Ensure this matches what you registered on Paytm dev console
 REDIRECT_URI = os.getenv("PAYTM_REDIRECT_URI", "https://paytm-auth-site.vercel.app/callback")
 
-# 🔗 Paytm OAuth2 Endpoints
-AUTH_BASE = "https://developer.paytmmoney.com/oauth2/authorize"
-TOKEN_URL = "https://developer.paytmmoney.com/oauth2/token"  # ✅ Fixed endpoint
-
-# ---------------- ROUTES ---------------- #
+# Paytm Money endpoints
+AUTH_BASE = "https://login.paytmmoney.com/merchant-login"
+TOKEN_URL = "https://developer.paytmmoney.com/accounts/v2/gettoken"
 
 @app.route("/")
 def index():
-    """Landing page with login button"""
     return render_template("index.html")
 
 @app.route("/login")
 def login():
-    """Redirect user to Paytm OAuth login"""
-    enc_redirect = quote_plus(REDIRECT_URI)
-    auth_url = f"{AUTH_BASE}?client_id={CLIENT_ID}&response_type=code&scope=read&redirect_uri={enc_redirect}"
+    # Random state (optional)
+    state = "xyz123"
+    auth_url = f"{AUTH_BASE}?apiKey={CLIENT_ID}&state={state}"
     return redirect(auth_url)
-
-@app.route("/test-env")
-def test_env():
-    """Check if environment variables are loaded"""
-    if CLIENT_ID and CLIENT_SECRET:
-        return "✅ Environment variables are working!"
-    return "❌ Environment variables NOT found!"
 
 @app.route("/callback")
 def callback():
-    """Paytm redirects here with ?code=... → Exchange code for tokens"""
-    code = request.args.get("code")
-    if not code:
-        return "Missing code", 400
+    request_token = request.args.get("request_token")
+    if not request_token:
+        return "Missing request_token", 400
 
     payload = {
-        "grant_type": "authorization_code",
-        "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
-        "code": code,
-        "redirect_uri": REDIRECT_URI,
+        "api_key": CLIENT_ID,
+        "api_secret_key": CLIENT_SECRET,
+        "request_token": request_token,
     }
 
     try:
-        resp = requests.post(TOKEN_URL, data=payload, timeout=10)
+        resp = requests.post(TOKEN_URL, json=payload, timeout=10)
         resp.raise_for_status()
         tokens = resp.json()
-        return jsonify(tokens)  # Shows access_token + refresh_token
+        return jsonify(tokens)
     except requests.exceptions.RequestException as e:
         return f"Token request failed: {e}", 500
 
-# ---------------- MAIN ---------------- #
+@app.route("/test-env")
+def test_env():
+    if CLIENT_ID and CLIENT_SECRET:
+        return "✅ Environment variables are working!"
+    return "❌ Environment variables missing!"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
