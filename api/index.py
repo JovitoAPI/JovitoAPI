@@ -20,10 +20,18 @@ def index():
 
 @app.route("/login")
 def login():
-    # Random state (optional)
-    state = "xyz123"
-    auth_url = f"{AUTH_BASE}?apiKey={CLIENT_ID}&state={state}"
+    if not CLIENT_ID:
+        return "❌ PAYTM_CLIENT_ID not set in environment", 500
+
+    if not REDIRECT_URI:
+        return "❌ PAYTM_REDIRECT_URI not set in environment", 500
+
+    # Build safe, URL-encoded redirect URI
+    enc_redirect = quote_plus(REDIRECT_URI)
+    auth_url = f"https://login.paytmmoney.com/merchant-login?apiKey={CLIENT_ID}&state=xyz"
+
     return redirect(auth_url)
+
 
 @app.route("/callback")
 def callback():
