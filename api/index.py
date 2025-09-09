@@ -32,7 +32,26 @@ def login():
 # 🔍 Debugging version of callback
 @app.route("/callback")
 def callback():
-    params = request.args.to_dict()
-    if not params:
-        return "❌ No query parameters received from Paytm", 400
-    return jsonify({"received_params": params})
+    request_token = request.args.get("requestToken")
+    if not request_token:
+        return "❌ Missing request_token in callback URL", 400
+
+    payload = {
+        "api_key": CLIENT_ID,
+        "api_secret_key": CLIENT_SECRET,
+        "request_token": request_token
+    }
+
+    try:
+        resp = requests.post(
+            TOKEN_URL,
+            json=payload,
+            headers={"Content-Type": "application/json"},
+            timeout=10
+        )
+        resp.raise_for_status()
+        tokens = resp.json()
+        return jsonify(tokens)  # shows access_token, public_access_token, read_access_token
+    except requests.exceptions.RequestException as e:
+        return f"❌ Token request failed: {e}", 500
+
